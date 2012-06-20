@@ -293,6 +293,9 @@ class ListyFly
 
   # Mechanism for marking off tasks as complete.
   def mark_task
+    # Get both incomplete and complete tasks so as to get data on 
+    # number of subtasks and number of main tasks, both complete 
+    # and incomplete.
     get_completed_tasks
     get_incomplete_tasks
     unless @incomplete_tasks.empty? # Are all tasks completed?
@@ -307,25 +310,34 @@ class ListyFly
       puts "\nEnter the number in parentheses corresponding to the task you wish to mark as completed:"
       while task_number = gets.strip
         break if task_number == "quit"
-        @filelines[task_number.to_i].gsub!(/\[_\]|\|_\|/, "{x} DONE!")
+        # If the line is a main task
         if @filelines[task_number.to_i] =~ /\[_\]/
+          @filelines[task_number.to_i].gsub!(/\[_\]/, "{x} DONE!")
           @no_of_completed_main_tasks += 1
           @no_of_incomplete_main_tasks -= 1
-        end
-        if @filelines[task_number.to_i] =~ /\|_\|/
+        # If the line is a sub task
+        elsif @filelines[task_number.to_i] =~ /\|_\|/
+          @filelines[task_number.to_i].gsub!(/\|_\|/, "{x} DONE!")
           @no_of_completed_sub_tasks += 1
           @no_of_incomplete_sub_tasks -= 1
         end
         puts "You can enter quit to finish or keep on marking off."
       end
+
+      # Variables to aid writing meta data into file.
       @num_of_tasks = @no_of_completed_main_tasks + @no_of_incomplete_main_tasks
       @num_of_subtasks = @no_of_completed_sub_tasks + @no_of_incomplete_sub_tasks
+
       # Prepare a new file to override the old file. 
       file = File.new(@edit_file, 'w')
-      @filelines.push("\n#{"-"*50}")
-      @filelines.push("\n ** Main Tasks: #{@num_of_tasks} total, #{@no_of_completed_main_tasks} finished, #{@no_of_incomplete_main_tasks} left.")
-      @filelines.push("\n ** Sub Tasks: #{@num_of_subtasks} total, #{@no_of_completed_sub_tasks} finished, #{@no_of_incomplete_sub_tasks} left.")
-      @filelines.push("\n#{"-"*50}")
+      # 4 times remove the last line in file.
+      # Basically, remove the previous meta data on file.
+      4.times { @filelines.pop }
+      # Push the new meta data into file.
+      @filelines.push("#{"-"*50}")
+      @filelines.push(" ** Main Tasks: #{@num_of_tasks} total, #{@no_of_completed_main_tasks} finished, #{@no_of_incomplete_main_tasks} left.")
+      @filelines.push(" ** Sub Tasks: #{@num_of_subtasks} total, #{@no_of_completed_sub_tasks} finished, #{@no_of_incomplete_sub_tasks} left.")
+      @filelines.push("#{"-"*50}")
       file.puts @filelines
       file.close
       # Parse the file again
