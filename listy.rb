@@ -1,6 +1,6 @@
 # A program for creating and working with advanced To-Do lists. 
 
-class ToDo
+class ListyFly
 
   def initialize
     puts "What's your good name?"
@@ -259,5 +259,3 @@ class ToDo
   end
 
 end
-
-#ToDo.new
