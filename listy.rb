@@ -224,13 +224,21 @@ class ListyFly
   # Returns an array with all completed tasks.
   def get_completed_tasks
     @completed_tasks = []
+    @no_of_completed_main_tasks = 0
+    @no_of_completed_sub_tasks = 0
     @edit_file_content.each do |hash|
       # Push if it is completed ({x}) and make sure that it is a main task.
-      @completed_tasks.push(hash.keys[0]) if hash.keys[0] =~ /\{x\}/ && hash.keys[0] =~ /\.\) /
+      if hash.keys[0] =~ /\{x\}/ && hash.keys[0] =~ /\.\) /
+        @completed_tasks.push(hash.keys[0])
+        @no_of_completed_main_tasks += 1
+      end
       unless hash[hash.keys[0]].empty?
         hash[hash.keys[0]].each do |subtask|
           # Push if it is completed ({x}) and make sure that it is a subtask.
-          @completed_tasks.push("\t#{subtask}") if subtask =~ /\{x\}/ && subtask =~ / -> /
+          if subtask =~ /\{x\}/ && subtask =~ / -> /
+            @completed_tasks.push("\t#{subtask}")
+            @no_of_completed_sub_tasks += 1
+          end
         end
       end
     end
@@ -250,15 +258,23 @@ class ListyFly
   # Returns an array with all incomplete tasks.
   def get_incomplete_tasks
     @incomplete_tasks = []
+    @no_of_incomplete_main_tasks = 0
+    @no_of_incomplete_sub_tasks = 0
     @edit_file_content.each do |hash|
       # Push if it is incomplete
       # [_] corresponds to a main task.
       # |_| corresponds to a subtask
-      @incomplete_tasks.push(hash.keys[0]) if hash.keys[0] =~ /\[_\]/ 
+      if hash.keys[0] =~ /\[_\]/
+        @incomplete_tasks.push(hash.keys[0])
+        @no_of_incomplete_main_tasks += 1
+      end 
       unless hash[hash.keys[0]].empty?
         hash[hash.keys[0]].each do |subtask|
           # Push if it is incomplete
-          @incomplete_tasks.push("\t#{subtask}") if subtask =~ /\|_\|/
+          if subtask =~ /\|_\|/
+            @incomplete_tasks.push("\t#{subtask}")
+            @no_of_incomplete_sub_tasks += 1
+          end
         end
       end
     end
@@ -277,6 +293,7 @@ class ListyFly
 
   # Mechanism for marking off tasks as complete.
   def mark_task
+    get_completed_tasks
     get_incomplete_tasks
     unless @incomplete_tasks.empty? # Are all tasks completed?
       @filelines.each_with_index do |task, index|
@@ -291,10 +308,24 @@ class ListyFly
       while task_number = gets.strip
         break if task_number == "quit"
         @filelines[task_number.to_i].gsub!(/\[_\]|\|_\|/, "{x} DONE!")
+        if @filelines[task_number.to_i] =~ /\[_\]/
+          @no_of_completed_main_tasks += 1
+          @no_of_incomplete_main_tasks -= 1
+        end
+        if @filelines[task_number.to_i] =~ /\|_\|/
+          @no_of_completed_sub_tasks += 1
+          @no_of_incomplete_sub_tasks -= 1
+        end
         puts "You can enter quit to finish or keep on marking off."
       end
+      @num_of_tasks = @no_of_completed_main_tasks + @no_of_incomplete_main_tasks
+      @num_of_subtasks = @no_of_completed_sub_tasks + @no_of_incomplete_sub_tasks
       # Prepare a new file to override the old file. 
       file = File.new(@edit_file, 'w')
+      @filelines.push("\n#{"-"*50}")
+      @filelines.push("\n ** Main Tasks: #{@num_of_tasks} total, #{@no_of_completed_main_tasks} finished, #{@no_of_incomplete_main_tasks} left.")
+      @filelines.push("\n ** Sub Tasks: #{@num_of_subtasks} total, #{@no_of_completed_sub_tasks} finished, #{@no_of_incomplete_sub_tasks} left.")
+      @filelines.push("\n#{"-"*50}")
       file.puts @filelines
       file.close
       # Parse the file again
