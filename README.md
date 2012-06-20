@@ -14,11 +14,11 @@ irb(main):001:0> require "./listy.rb"
 irb(main):002:0> ListyFly.new
 ```
 You will be greeted by a message:
-```ruby
+```
 What's your good name?
 ```
 Enter in your name (or anything else, if that's how you roll). Then:
-```ruby
+```
 Good morning, name! What would you like me to do?
 1.) Make A To-Do List
 2.) Load A To-Do List
