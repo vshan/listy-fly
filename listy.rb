@@ -347,3 +347,5 @@ class ListyFly
     end
   end
 end
+
+ListyFly.new

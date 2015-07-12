@@ -1,0 +1,20 @@
+////////////////////////////// FEATURES FOR LIFESTRUCT //////////////////////////////
+
+1.) Adding Chronic Support {x} DONE!
+
+2.) Removing virtual attributes, to an extent [_]
+
+3.) Think about draggable events [_]
+
+4.) Test a lot, please [_]
+
+5.) Neaten up, index. make it prettier [_]
+
+6.) deal with non-loading js [_]
+
+7.) add devise auth, make landing page [_]
+
+--------------------------------------------------
+ ** Main Tasks: 7 total, 1 finished, 6 left.
+ ** Sub Tasks: 0 total, 0 finished, 0 left.
+--------------------------------------------------
