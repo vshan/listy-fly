@@ -7,11 +7,11 @@ It includes task-nesting, task meta information and many other useful features.
 
 First, download the file and change your current working directory to the newly downloaded folder. 
 Then, load the listy.rb file and initiate it.
-```ruby
-$ irb
-irb(main):001:0> require "./listy.rb"
-=> true
-irb(main):002:0> ListyFly.new
+
+```bash
+$ git clone https://github.com/Vshan/listy-fly.git
+$ cd listy-fly
+$ ruby listy.rb
 ```
 You will be greeted by a message:
 ```
