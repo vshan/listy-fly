@@ -8,7 +8,7 @@ It includes task-nesting, task meta information and many other useful features.
 First, clone the repo and change your current working directory to the newly downloaded folder.
 Then, run the listy.rb file.
 
-```bash
+```shell
 $ git clone https://github.com/Vshan/listy-fly.git
 $ cd listy-fly
 $ ruby listy.rb
